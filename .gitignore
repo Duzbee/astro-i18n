@@ -20,5 +20,4 @@ lerna-debug.log*
 
 # Custom
 node_modules
-dist
 *.local
