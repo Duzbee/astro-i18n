@@ -12,6 +12,7 @@ export function generatePageProxy(
 	proxyPath: string,
 	importGetStaticPaths: boolean,
 	exportPrerender: boolean,
+	langCode: string,
 ) {
 	const depth = Math.max(
 		0,
@@ -24,7 +25,7 @@ export function generatePageProxy(
 
 	let pageProxy = `---\nimport Page from ${importPath}`
 	if (importGetStaticPaths) {
-		pageProxy += getStaticPaths(importPath)
+		pageProxy += getStaticPaths(importPath, langCode)
 	}
 	if (exportPrerender) {
 		pageProxy += "export const prerender = true\n\n"
@@ -35,6 +36,6 @@ export function generatePageProxy(
 	writeNestedFile(join(pagesDirectory, proxyPath), pageProxy)
 }
 
-function getStaticPaths(importPath: string) {
-	return `import { getStaticPaths as proxyGetStaticPaths } from ${importPath}import { extractRouteLangCode } from "${PACKAGE_NAME}"\n\n/* @ts-ignore */\nexport const getStaticPaths = (props) => proxyGetStaticPaths({\n\t...props,\n\tlangCode: extractRouteLangCode(import.meta.url),\n})\n\n`
+function getStaticPaths(importPath: string, langCode: string) {
+	return `import { getStaticPaths as proxyGetStaticPaths } from ${importPath}import { extractRouteLangCode } from "${PACKAGE_NAME}"\n\n/* @ts-ignore */\nexport const getStaticPaths = (props) => proxyGetStaticPaths({\n\t...props,\n\tlangCode: "${langCode}",\n})\n\n`
 }
